@@ -78,7 +78,6 @@ python train_all_shards_with_best.py
 
 This step:
 
-* Reads the best model from `best_model.json`
 * Trains that model on all shards and splits
 * Saves trained models in:
 
@@ -101,9 +100,8 @@ This step:
 ├── best_model.json
 ├── Data_sharding_splitting.ipynb
 ├── diabetes_with_users_reordered.csv
-├── model_selection.py
 ├── Remove_user_id.py
-├── train_all_shards_with_best.py
+├── train_all_shards1.py
 ├── requirements.txt
 ├── LICENSE
 └── README.md

@@ -12,6 +12,7 @@ from sklearn.metrics import accuracy_score
 SISA_DIR = "sisa_data/"
 MODEL_DIR = os.path.join(SISA_DIR, "models/")
 MAPPING_FILE = os.path.join(SISA_DIR, "user_mapping.json")
+STUDENT_MODEL_PATH = os.path.join(MODEL_DIR, "student_model.pkl")
 TARGET_COLUMN = "Outcome"
 
 os.makedirs(MODEL_DIR, exist_ok=True)
@@ -25,6 +26,11 @@ class CombinedModel:
         preds = [model.predict_proba(X) for model in self.models]
         avg_pred = sum(preds) / len(preds)
         return avg_pred.argmax(axis=1)
+    
+    def predict_proba(self, X):
+        preds = [model.predict_proba(X) for model in self.models]
+        avg_pred = sum(preds) / len(preds)
+        return avg_pred
 
 # -------------------- HELPERS --------------------
 def load_dataset(path):
@@ -54,6 +60,48 @@ def get_all_user_ids():
         mapping = json.load(f)
     return sorted(int(uid) for uid in mapping.keys())
 
+# -------------------- STUDENT MODEL TRAINING --------------------
+def train_student_model(teacher_model, shard_paths):
+    """Train student model using hard labels from teacher ensemble"""
+    print("\n Training Student Model using Hard Labels...")
+    
+    # Collect all data and teacher predictions
+    X_all = []
+    y_hard_all = []
+    
+    for path in shard_paths:
+        X, y = load_dataset(path)
+        # Get hard predictions from teacher (predicted class labels)
+        y_hard = teacher_model.predict(X)
+        X_all.append(X)
+        y_hard_all.append(y_hard)
+    
+    X_combined = pd.concat(X_all, axis=0, ignore_index=True)
+    y_hard_combined = np.concatenate(y_hard_all)
+    
+    # Train student model on hard labels
+    student_model = LogisticRegression(max_iter=500)
+    student_model.fit(X_combined, y_hard_combined)
+    
+    # Save student model
+    save_model(student_model, STUDENT_MODEL_PATH)
+    print(f"✅ Student model saved to {STUDENT_MODEL_PATH}")
+    
+    return student_model
+
+def evaluate_student_model(student_model, shard_paths):
+    """Evaluate student model accuracy"""
+    print("\n Calculating Student Model accuracy...")
+    accs = []
+    for path in shard_paths:
+        X, y = load_dataset(path)
+        preds = student_model.predict(X)
+        acc = accuracy_score(y, preds)
+        accs.append(acc)
+    avg_acc = np.mean(accs)
+    print(f"Student Model Accuracy: {avg_acc:.4f}")
+    return avg_acc
+
 # -------------------- UNLEARNING FUNCTION --------------------
 def unlearn_user(user_id, model_paths):
     user_id_key = str(int(float(user_id)))  # Ensure consistent string key
@@ -65,7 +113,7 @@ def unlearn_user(user_id, model_paths):
         mapping = json.load(f)
 
     if user_id_key not in mapping:
-        print(f"User {user_id_key} not found in mapping. Nothing to unlearn.")
+        print(f"❌ User {user_id_key} not found in mapping. Nothing to unlearn.")
         return []
 
     user_info = mapping[user_id_key]
@@ -126,8 +174,8 @@ def main():
         save_model(model, model_file)
         model_paths.append(model_file)
 
-    # Initial ensemble accuracy
-    print("\n🔹 Calculating initial SISA accuracy...")
+    # Initial SISA ensemble accuracy
+    print("\n Calculating initial SISA accuracy...")
     combined_model = combine_models(model_paths)
     accs = []
     for path in shard_paths:
@@ -135,23 +183,41 @@ def main():
         preds = combined_model.predict(X)
         acc = accuracy_score(y, preds)
         accs.append(acc)
-    print(f"Initial SISA Accuracy: {np.mean(accs):.4f}")
+    initial_sisa_acc = np.mean(accs)
+    print(f"Initial SISA Accuracy: {initial_sisa_acc:.4f}")
 
     # Get user input to unlearn
-    user_to_unlearn = input("\nEnter user_id to unlearn: ")
+    user_to_unlearn = input("\n👤 Enter user_id to unlearn: ")
     affected = unlearn_user(user_to_unlearn, model_paths)
+    
     if affected:
-        print(f"Affected shards/splits: {affected}")
+        print(f"📝 Affected shards/splits: {affected}")
+        
+        # Reload updated ensemble after unlearning
+        print("\n🔄 Reloading updated SISA ensemble...")
+        combined_model = combine_models(model_paths)
+        
+        # Train student model ONLY after unlearning
+        student_model = train_student_model(combined_model, shard_paths)
+        student_acc = evaluate_student_model(student_model, shard_paths)
+        
+        # Comparison
+        print("\n" + "="*60)
+        print("📊 ACCURACY COMPARISON")
+        print("="*60)
+        print(f"   Initial SISA Accuracy:           {initial_sisa_acc:.4f}")
+        print(f"   Student Model (after unlearning): {student_acc:.4f}")
+        print(f"   Difference:                       {student_acc - initial_sisa_acc:+.4f}")
+        print("="*60)
+    else:
+        print("\n⚠️  No unlearning performed. Student model not trained.")
 
     # Remaining users
     remaining_users = get_all_user_ids()
-    print(f"\nRemaining user IDs in mapping: {remaining_users}")
+    print(f"\n📋 Remaining user IDs in mapping: {remaining_users}")
 
     print("\n✅ Pipeline complete. All models saved in:", MODEL_DIR)
 
 if __name__ == "__main__":
     main()
 
-
-
-# Improvements and some changes have been made!!!

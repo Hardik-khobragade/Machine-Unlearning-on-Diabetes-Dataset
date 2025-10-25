@@ -103,7 +103,7 @@ def evaluate_student_model(student_model, shard_paths):
     return avg_acc
 
 # -------------------- UNLEARNING FUNCTION --------------------
-def unlearn_user(user_id, model_paths):
+def unlearn_user(user_id, model_paths, shard_paths):
     user_id_key = str(int(float(user_id)))  # Ensure consistent string key
     if not os.path.exists(MAPPING_FILE):
         print("❌ No user mapping file found.")
@@ -138,12 +138,13 @@ def unlearn_user(user_id, model_paths):
             df = df.drop(rows_in_df, axis=0)
             df.to_csv(csv_path, index=False)
 
-            # Retrain model for this shard (assuming one model per shard)
+            # Retrain model for this shard
             if len(df) > 0:
                 X, y = load_dataset(csv_path)
                 model = LogisticRegression(max_iter=500)
                 model.fit(X, y)
-                save_model(model, model_paths[shard])
+                model_file = os.path.join(MODEL_DIR, f"model_shard_{shard}_split_{split}.pkl")
+                save_model(model, model_file)
                 affected_shards.append(f"shard_{shard}_split_{split}")
 
     # Remove user from mapping
@@ -165,12 +166,18 @@ def main():
     # Train all shards initially
     model_paths = []
     print("Training all shards with LogisticRegression...\n")
-    for i, path in enumerate(shard_paths):
-        print(f"[{i+1}/{len(shard_paths)}] Training on {os.path.basename(path)}")
+    for path in shard_paths:
+        basename = os.path.basename(path)
+        # Extract shard and split numbers from filename like "shard_0_split_0.csv"
+        parts = basename.replace('.csv', '').split('_')
+        shard_num = parts[1]
+        split_num = parts[3]
+        
+        print(f"Training on {basename}")
         X, y = load_dataset(path)
         model = LogisticRegression(max_iter=500)
         model.fit(X, y)
-        model_file = os.path.join(MODEL_DIR, f"model_shard_{i}.pkl")
+        model_file = os.path.join(MODEL_DIR, f"model_shard_{shard_num}_split_{split_num}.pkl")
         save_model(model, model_file)
         model_paths.append(model_file)
 
@@ -188,7 +195,7 @@ def main():
 
     # Get user input to unlearn
     user_to_unlearn = input("\n👤 Enter user_id to unlearn: ")
-    affected = unlearn_user(user_to_unlearn, model_paths)
+    affected = unlearn_user(user_to_unlearn, model_paths, shard_paths)
     
     if affected:
         print(f"📝 Affected shards/splits: {affected}")
@@ -220,4 +227,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 

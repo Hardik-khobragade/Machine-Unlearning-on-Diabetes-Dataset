@@ -66,33 +66,9 @@ python Remove_user_id.py
 
 ---
 
-## 🧠 4. Model Selection
 
-Run:
 
-```bash
-python best_model_selector.py
-```
-
-This script:
-
-* Loads sample data from `sisa_data/shard_0_split_0.csv`
-* Trains multiple models:
-
-  * Logistic Regression
-  * Random Forest
-  * Gradient Boosting
-  * XGBoost
-* Evaluates each model on accuracy
-* Saves the best model configuration to:
-
-```
-best_model.json
-```
-
----
-
-## 🧩 5. Train All Shards with the Best Model
+## 🧩 4. Train All Shards with Logostic regression Model
 
 Run:
 
@@ -102,7 +78,6 @@ python train_all_shards_with_best.py
 
 This step:
 
-* Reads the best model from `best_model.json`
 * Trains that model on all shards and splits
 * Saves trained models in:
 
@@ -125,9 +100,8 @@ This step:
 ├── best_model.json
 ├── Data_sharding_splitting.ipynb
 ├── diabetes_with_users_reordered.csv
-├── model_selection.py
 ├── Remove_user_id.py
-├── train_all_shards_with_best.py
+├── train_all_shards1.py
 ├── requirements.txt
 ├── LICENSE
 └── README.md

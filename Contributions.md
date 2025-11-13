@@ -86,3 +86,32 @@ My role in Team 1 centered on executing the **final stage of the data preparatio
 - Simplified retraining through modular shard-based design.  
 - Enhanced reproducibility and scalability for future data removal scenarios.
 
+---
+
+## Team 3: Aman 
+
+### Project Contribution: Model Validation, Student Model Distillation & Integration Testing
+
+### Contributions
+
+1. **Comprehensive Testing & Validation**  
+   - Conducted extensive testing on Team 2's unlearning implementation (`remove_user_id.py` and `train_all_shards.py`).  
+   - Validated the integrity of the SISA ensemble after user removal, ensuring no data leakage or inconsistencies.  
+   - Performed edge-case testing to verify correct handling of multi-shard user distributions and boundary conditions.
+
+2. **Hard-Label Student Model Implementation in `unlearning.py`**  
+   - Integrated a **hard-label distillation framework** using the SISA ensemble to generate hard predictions for training a compact student model.  
+   - Implemented `train_student_model()` function that collects hard predictions across all shards and trains a unified Logistic Regression student model.  
+   - Added `evaluate_student_model()` to measure accuracy and ensure the student model maintains performance post-unlearning.
+
+3. **Workflow Enhancement & Performance Analysis**  
+   - Preserved the original Team 2 logic while seamlessly embedding the student model training pipeline after unlearning operations.  
+   - Designed comparative accuracy reporting to track the performance delta between initial SISA accuracy and post-unlearning student model accuracy.  
+   - Collaborated with team members to ensure smooth integration without disrupting existing shard-level retraining mechanisms.
+
+### Impact
+- Ensured robustness and reliability of the unlearning pipeline through rigorous testing.  
+- Introduced hard-label distillation to create a lightweight, deployable model while maintaining SISA's unlearning benefits.  
+- Enabled transparent performance tracking, providing clear insights into the trade-offs between model efficiency and accuracy post-unlearning.
+
+---

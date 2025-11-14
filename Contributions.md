@@ -66,6 +66,40 @@ My role in Team 1 centered on executing the **final stage of the data preparatio
 - Verified output integrity and ensured readiness for Team 2’s model training stage.
 
 ---
+### Team 1: Aryan 
+#  Project Contribution Summary: SISA Sharding & User Mapping
+---
+## Overview
+
+### My contribution : focused on developing the core *SISA (Sharded, Isolated, Slice-based Aggregation) splitting logic* and constructing an advanced, auditable *user-to-data mapping system*. This system is essential for enabling shard-level training and precise machine unlearning.
+
+##  Key Implementation Highlights
+
+### 1. Core SISA Logic Development
+* Implemented the complete *SISA splitting algorithm (Cell 2)*, covering:
+    * Randomized dataset shuffling.
+    * Accurate *shard* and *split* creation.
+    * User-level tracking throughout the partitioning process.
+* Ensured accurate segmentation for downstream SISA-style training methodologies.
+
+### 2. Auditable User Mapping System
+* Designed and generated a comprehensive **user_mapping.json** file.
+* This structure tracks the exact location of every user's data across *shards* and *splits*, along with their original row indices.
+* *Outcome:* Provided precise data traceability, which is fundamental for future auditing and unlearning workflows.
+
+### 3. Integration & Stability
+* Achieved *complete synchronicity* with *Cell 1 (Preprocessing)* by aligning with generated user IDs and preserving index order.
+* Implemented robust *error handling* to safeguard against common failure points, such as empty shards, empty splits, or uneven user distribution.
+
+---
+
+##  Project Outcome
+
+A *fully functional and robust SISA splitting mechanism* was delivered, accompanied by a detailed and auditable *user-location map*. This output provides Team 2 with the reliable, well-structured data foundation required for:
+
+1.  *Efficient Downstream Training*
+2.  *Data Auditing*
+3.  *Precise Machine Unlearning Phases*
 
 ## Team 2: Hardik
 

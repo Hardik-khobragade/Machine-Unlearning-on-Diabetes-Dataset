@@ -67,11 +67,11 @@ My role in Team 1 centered on executing the **final stage of the data preparatio
 
 ---
 ### Team 1: Aryan 
-#  Project Contribution Summary: SISA Sharding & User Mapping
+## Project Contribution Summary: SISA Sharding & User Mapping
 ---
 ## Overview
 
-## My contribution : focused on developing the core *SISA (Sharded, Isolated, Slice-based Aggregation) splitting logic* and constructing an advanced, auditable *user-to-data mapping system*. This system is essential for enabling shard-level training and precise machine unlearning.
+### My contribution : focused on developing the core *SISA (Sharded, Isolated, Slice-based Aggregation) splitting logic* and constructing an advanced, auditable *user-to-data mapping system*. This system is essential for enabling shard-level training and precise machine unlearning.
 
 ##  Key Implementation Highlights
 

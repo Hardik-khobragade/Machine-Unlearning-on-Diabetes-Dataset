@@ -71,11 +71,11 @@ My role in Team 1 centered on executing the **final stage of the data preparatio
 ---
 ## Overview
 
-### My contribution : focused on developing the core *SISA (Sharded, Isolated, Slice-based Aggregation) splitting logic* and constructing an advanced, auditable *user-to-data mapping system*. This system is essential for enabling shard-level training and precise machine unlearning.
+## My contribution : focused on developing the core *SISA (Sharded, Isolated, Slice-based Aggregation) splitting logic* and constructing an advanced, auditable *user-to-data mapping system*. This system is essential for enabling shard-level training and precise machine unlearning.
 
 ##  Key Implementation Highlights
 
-### 1. Core SISA Logic Development
+## 1. Core SISA Logic Development
 * Implemented the complete *SISA splitting algorithm (Cell 2)*, covering:
     * Randomized dataset shuffling.
     * Accurate *shard* and *split* creation.

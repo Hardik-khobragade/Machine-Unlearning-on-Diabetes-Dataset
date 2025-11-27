@@ -143,3 +143,53 @@ My role in Team 1 centered on executing the **final stage of the data preparatio
 - Enabled transparent performance tracking, providing clear insights into the trade-offs between model efficiency and accuracy post-unlearning.
 
 ---
+
+## Team 2: Madhura
+
+### Project Contribution: Machine Unlearning Implementation and Documentation 
+
+### Contributions
+1. **Implemented `remove_user_id.py`**  
+   - Designed a script to locate and remove specific user IDs from each data shard.  
+   - Ensured shard consistency and maintained balanced distributions after ID removal.
+
+2. **Documentation**
+   - Created clear and structured documentation for the machine unlearning workflow.
+   - Organized the workflow steps, system architecture, methodology, and experimental results into a coherent report.
+   - Ensured the documentation is easy to follow, technically accurate, and maintainable for future development.
+
+### Impact
+- Enhanced reproducibility and scalability for future data removal scenarios.
+- Improved the overall clarity and usability of the machine unlearning project through well-structured documentation.
+- Enabled smooth understanding of the unlearning workflow, making the system easier for future team members or developers to extend.
+
+---
+
+## Team 3: Arya
+
+### Project Contribution: Model Validation, Student Model Distillation & Documentation
+
+### Contributions
+1. **Comprehensive Testing & Validation**  
+   - Conducted extensive testing on Team 2's unlearning implementation (`remove_user_id.py` and `train_all_shards.py`).  
+   - Validated the integrity of the SISA ensemble after user removal, ensuring no data leakage or inconsistencies.  
+   - Performed edge-case testing to verify correct handling of multi-shard user distributions and boundary conditions.
+
+2. **Hard-Label Student Model Implementation in `unlearning.py`**  
+   - Integrated a **hard-label distillation framework** using the SISA ensemble to generate hard predictions for training a compact student model.  
+   - Implemented `train_student_model()` function that collects hard predictions across all shards and trains a unified Logistic Regression student model.  
+   - Added `evaluate_student_model()` to measure accuracy and ensure the student model maintains performance post-unlearning.
+
+3. **Documentation**
+   - Created clear and structured documentation for the machine unlearning workflow.
+   - Organized the workflow steps, system architecture, methodology, and experimental results into a coherent report.
+   - Ensured the documentation is easy to follow, technically accurate, and maintainable for future development.
+
+### Impact
+- Ensured robustness and reliability of the unlearning pipeline through rigorous testing.  
+- Introduced hard-label distillation to create a lightweight, deployable model while maintaining SISA's unlearning benefits.
+- Enabled smooth understanding of the unlearning workflow, making the system easier for future team members or developers to extend.
+
+---
+   
+   
